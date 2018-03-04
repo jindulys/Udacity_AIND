@@ -144,24 +144,73 @@ get an answer.
 
 '''
 
+# Stage 4: reduce puzzle
+
 def reduce_puzzle(values):
 	stalled = False
 	while not stalled:
 		solved_values_before = len([box for box in values.keys() if len(values[box]) == 1])
-
-		print "Before constraints propagation -- \n"
-		display(values)
 		eliminate(values)
-		print "After elimination propagation -- \n"
-		display(values)
 		only_choice(values)
-		print "After constraints propagation -- \n"
-		display(values)
 		solved_values_after = len([box for box in values.keys() if len(values[box]) == 1])
 		stalled = solved_values_after == solved_values_before
 		if len([box for box in values.keys() if len(values[box]) == 0]):
 			return False
 	return values
+
+# Stage 5: Search
+
+def search(values):
+    "Using depth-first search and propagation, create a search tree and solve the sudoku."
+    # First, reduce the puzzle using the previous function
+    values = reduce_puzzle(values)
+    if values is False:
+    	return False
+    solved_values = len([box for box in values.keys() if len(values[box]) == 1])
+    if solved_values == 81:
+    	# Note return values so it can be used.
+    	return values
+
+    def find_min_box(a, b):
+    	if len(values[a])<len(values[b]):
+    		return a
+    	else:
+    		return b
+    
+    # First time, I forgot to filter out those boxes whose len == 1. So I reached max recursion.
+    candidateBox = reduce(find_min_box, filter(lambda x: len(values[x]) > 1, values.keys()))
+
+    for digit in values[candidateBox]:
+    	# Important: For python, dict needs to be copy otherwise you permanently change those value.
+    	valuesCopy = values.copy()
+    	valuesCopy[candidateBox] = digit
+    	result = search(valuesCopy)
+    	if result:
+    		return result
+    return False
+
+'''
+Solutions:
+
+def search(values):
+    "Using depth-first search and propagation, try all possible values."
+    # First, reduce the puzzle using the previous function
+    values = reduce_puzzle(values)
+    if values is False:
+        return False ## Failed earlier
+    if all(len(values[s]) == 1 for s in boxes): 
+        return values ## Solved!
+    # Choose one of the unfilled squares with the fewest possibilities
+    n,s = min((len(values[s]), s) for s in boxes if len(values[s]) > 1)
+    # Now use recurrence to solve each one of the resulting sudokus, and 
+    for value in values[s]:
+        new_sudoku = values.copy()
+        new_sudoku[s] = value
+        attempt = search(new_sudoku)
+        if attempt:
+            return attempt
+'''
+
 
 
 
@@ -184,6 +233,7 @@ if __name__ == '__main__':
  	print ""
 
  	display(reduce_puzzle(grid_values(harderSudoku)))
+ 	display(search(grid_values(harderSudoku)))
 
 
 
