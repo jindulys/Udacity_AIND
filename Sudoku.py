@@ -218,17 +218,17 @@ if __name__ == '__main__':
 	sudokuString = '..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..9..5.1.3..'
 	harderSudoku = '4.....8.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
  	# Stage 1
- 	#display(grid_values(sudokuString))
+ 	display(grid_values(sudokuString))
 
  	print ""
 
  	# Stage 2
- 	#display(eliminate(grid_values(sudokuString)))
+ 	display(eliminate(grid_values(sudokuString)))
 
  	print ""
 
  	# Stage 3
- 	#display(only_choice(eliminate(grid_values(sudokuString))))
+ 	display(only_choice(eliminate(grid_values(sudokuString))))
 
  	print ""
 
